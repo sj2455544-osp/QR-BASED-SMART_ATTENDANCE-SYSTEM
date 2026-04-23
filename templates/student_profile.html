@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Student Portal</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #6366f1;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light-bg: #f8fafc;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--light-bg); 
+            color: #334155; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0; padding-top: 85px; /* Navbar overlap fix */
+        }
+        
+        /* --- PROFESSIONAL NAVBAR --- */
+        .student-nav { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(0,0,0,0.06); 
+            padding: 12px 0; 
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03);
+            z-index: 1050; position: fixed; top: 0; width: 100%;
+        }
+        .navbar-brand { 
+            font-weight: 800; color: var(--dark) !important; display: flex; align-items: center; gap: 10px; font-size: 1.4rem; letter-spacing: -0.5px;
+        }
+        .student-badge { 
+            font-size: 0.7rem; background: #e0e7ff; color: var(--primary); padding: 6px 12px; border-radius: 8px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; 
+        }
+        .nav-profile-btn {
+            background: white; border: 1px solid #e2e8f0; color: var(--dark); font-weight: 600; padding: 8px 16px; border-radius: 12px; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer;
+        }
+        .nav-profile-btn:hover { border-color: #cbd5e1; background: #f8fafc; }
+        
+        .nav-link { font-weight: 600; color: #64748b !important; padding: 8px 16px !important; border-radius: 10px; transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { background: #eef2ff; color: var(--primary) !important; }
+        
+        /* --- PROFILE CONTENT --- */
+        .profile-wrapper { padding: 60px 0 80px; flex: 1; }
+        
+        .profile-card {
+            background: white; border-radius: 24px; padding: 50px; box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.08); border: 1px solid rgba(0,0,0,0.03); position: relative; overflow: hidden;
+        }
+        
+        .profile-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 120px; background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); z-index: 0;
+        }
+
+        .profile-header-content { position: relative; z-index: 1; }
+
+        .profile-avatar {
+            width: 130px; height: 130px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin: 0 auto 20px; box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3); border: 6px solid white;
+        }
+
+        .info-box { 
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px 25px; transition: all 0.3s ease;
+        }
+        .info-box:hover { border-color: #cbd5e1; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.03); transform: translateY(-2px); }
+        
+        .info-label { font-size: 0.75rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .info-data { font-size: 1.15rem; font-weight: 700; color: var(--dark); margin-bottom: 0; word-break: break-all; }
+
+        /* --- RESPONSIVE PREMIUM FOOTER --- */
+        .modern-footer { 
+            background-color: var(--dark); 
+            padding: 50px 0 25px; 
+            margin-top: auto; 
+            border-top: 4px solid var(--primary);
+        }
+        .footer-brand-icon {
+            width: 40px; height: 40px; 
+            background: var(--primary); 
+            color: white; 
+            border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem;
+        }
+        .footer-links-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        @media (min-width: 992px) {
+            .footer-links-container { justify-content: flex-end; }
+        }
+        .footer-link {
+            color: #cbd5e1;
+            text-decoration: none; font-weight: 600; 
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;
+            white-space: nowrap;
+        }
+        .footer-link:hover { color: white !important; transform: translateX(3px); }
+        .footer-link i { color: var(--primary); }
+        .footer-text-light { color: #94a3b8; } 
+
+        @media (max-width: 768px) {
+            .profile-card { padding: 30px 20px; }
+            .profile-card::before { height: 100px; }
+            .profile-avatar { width: 110px; height: 110px; font-size: 2.8rem; border-width: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg student-nav fixed-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            
+            <a class="navbar-brand" href="{% url 'student_dashboard' %}">
+                <div class="bg-primary text-white rounded p-1 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                    <i class="bi bi-qr-code-scan fs-5"></i>
+                </div>
+                QR-Attend
+                <span class="student-badge d-none d-md-inline-block ms-2">Student Portal</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="studentNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-2">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'student_dashboard' %}"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/attendance/scan/dummy_token/"><i class="bi bi-camera-video-fill me-1"></i> Scan QR</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'student_history' %}"><i class="bi bi-clock-history me-1"></i> History</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'student_profile' %}"><i class="bi bi-person-badge-fill me-1"></i> My Profile</a></li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="nav-profile-btn d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle text-primary fs-5"></i>
+                        <span class="d-none d-sm-inline">{{ user.first_name }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2" style="min-width: 220px;">
+                        <li class="px-3 py-2 border-bottom mb-2">
+                            <p class="mb-0 fw-bold text-dark">{{ user.first_name }}</p>
+                            <p class="mb-0 small text-muted">{{ user.student.student_id }}</p>
+                        </li>
+                        <li><a class="dropdown-item py-2 rounded fw-semibold text-secondary" href="{% url 'student_dashboard' %}"><i class="bi bi-grid me-2"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item py-2 rounded fw-semibold text-danger mt-1 bg-danger bg-opacity-10" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="profile-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 col-xl-8">
+                    <div class="profile-card animate__animated animate__fadeInUp">
+                        
+                        <div class="text-center profile-header-content mb-5">
+                            <div class="profile-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <h2 class="fw-800 mb-1 text-dark">{{ user.first_name }}</h2>
+                            <p class="text-muted fw-semibold mb-3">
+                                {{ user.student.course }} {% if user.student.batch %}({{ user.student.batch }}){% endif %} • CIMAGE College
+                            </p>
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2 fw-bold">
+                                <i class="bi bi-check-circle-fill me-1"></i> Active Student Profile
+                            </span>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="info-box h-100">
+                                    <p class="info-label"><i class="bi bi-fingerprint text-primary fs-6"></i> University ID</p>
+                                    <p class="info-data">{{ user.student.student_id }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box h-100">
+                                    <p class="info-label"><i class="bi bi-book-half text-primary fs-6"></i> Enrolled Program</p>
+                                    <p class="info-data">{{ user.student.course }} {% if user.student.batch %}- {{ user.student.batch }}{% endif %}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box h-100">
+                                    <p class="info-label"><i class="bi bi-envelope-fill text-primary fs-6"></i> Official Email</p>
+                                    <p class="info-data">{{ user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box h-100">
+                                    <p class="info-label"><i class="bi bi-telephone-fill text-primary fs-6"></i> Contact Details</p>
+                                    <p class="info-data">+91 {{ user.student.phone }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-5 p-4 bg-light rounded-4 border border-light text-center">
+                            <p class="small text-muted fw-semibold mb-0">
+                                <i class="bi bi-shield-lock-fill text-primary me-1"></i> Your data is secured with end-to-end encryption. <br class="d-none d-md-block"> To update profile details, please contact the institutional administration.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="row gy-4 align-items-center">
+                
+                <div class="col-lg-4 text-center text-lg-start">
+                    <div class="d-flex align-items-center justify-content-center justify-content-lg-start gap-3 mb-2">
+                        <div class="footer-brand-icon shadow-sm"><i class="bi bi-qr-code-scan"></i></div>
+                        <h4 class="fw-900 text-white mb-0">QR-Attend</h4>
+                    </div>
+                    <p class="small footer-text-light mb-0 pe-lg-4 mt-2 mx-auto mx-lg-0" style="max-width: 300px;">
+                        Next-generation student portal for secure, geofenced, and proxy-free attendance management.
+                    </p>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="footer-links-container">
+                        <a href="{% url 'student_dashboard' %}" class="footer-link"><i class="bi bi-grid-fill"></i> Dashboard</a>
+                        <a href="#" class="footer-link"><i class="bi bi-question-circle-fill"></i> Help Center</a>
+                        <a href="#" class="footer-link"><i class="bi bi-shield-lock-fill"></i> Privacy Policy</a>
+                        <a href="#" class="footer-link text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Report Issue</a>
+                    </div>
+                </div>
+
+            </div>
+            
+            <hr class="border-secondary opacity-25 my-4">
+            
+            <div class="row align-items-center small footer-text-light">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; 2026 QR-Attend System. All rights reserved.
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    Developed for <span class="fw-bold text-white">CIMAGE College, Patna</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

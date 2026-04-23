@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* --- KILL HORIZONTAL SCROLLING --- */
+    .about-wrapper {
+        overflow-x: hidden !important;
+        width: 100%;
+        max-width: 100vw;
+    }
+
+    /* --- About Page Specific Styling & Animations --- */
+    .about-hero {
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+        border-radius: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .about-hero::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .text-indigo {
+        color: var(--primary);
+    }
+
+    /* --- Floating Tech Cards --- */
+    .tech-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+        border-radius: 24px;
+        z-index: 1;
+        position: relative;
+        height: 100%;
+    }
+    
+    /* --- Soft Gradient Icon Wrappers --- */
+    .icon-wrapper {
+        width: 75px;
+        height: 75px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        margin-bottom: 24px;
+        transition: transform 0.4s ease;
+    }
+
+    /* --- DESKTOP HOVER EFFECTS --- */
+    @media (min-width: 992px) {
+        .tech-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+        .tech-card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+    }
+
+    /* Specific Card Colors */
+    .card-geo .icon-wrapper { background: linear-gradient(135deg, #eef2ff, #e0e7ff); color: #4f46e5; }
+    .card-time .icon-wrapper { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #10b981; }
+    .card-db .icon-wrapper { background: linear-gradient(135deg, #fef3c7, #ffedd5); color: #f59e0b; }
+
+    /* --- Animated Image --- */
+    @keyframes floating {
+        0% { transform: translate(0, 0px); }
+        50% { transform: translate(0, -15px); }
+        100% { transform: translate(0, 0px); }
+    }
+
+    @keyframes fadeInSlide {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .project-illustration {
+        width: 100%; 
+        max-width: 400px; 
+        aspect-ratio: 1 / 1; 
+        object-fit: cover; 
+        border-radius: 50%; 
+        border: 12px solid #ffffff; 
+        box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.3); 
+        animation: floating 6s ease-in-out infinite; 
+        position: relative;
+        z-index: 2;
+        margin: 0 auto; /* Ensure image centers in its container */
+        display: block;
+    }
+
+    .glow-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 110%; 
+        max-width: 450px;
+        aspect-ratio: 1 / 1;
+        background: rgba(79, 70, 229, 0.08);
+        border-radius: 50%;
+        z-index: 1;
+    }
+
+    /* Animating the text elements on load */
+    .animate-text {
+        animation: fadeInSlide 1s ease-out forwards;
+        opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+
+    /* ==========================================
+       MOBILE RESPONSIVENESS (ABOUT PAGE) 
+       ========================================== */
+    @media (max-width: 991.98px) {
+        
+        .container {
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+
+        .about-hero {
+            padding: 40px 15px !important; 
+            text-align: center;
+            border-radius: 20px;
+        }
+
+        /* Remove margin causing the right-shift */
+        .about-hero .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            width: 100%;
+        }
+
+        .about-hero .col-lg-6 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Force all children to center */
+        }
+
+        .about-hero h1 {
+            font-size: 2.1rem !important;
+            margin-top: 15px;
+            word-break: break-word; 
+            line-height: 1.3 !important;
+            text-align: center;
+        }
+
+        .about-hero p.lead {
+            font-size: 1rem !important;
+            padding: 0 10px; 
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 95%; /* Keep text from hugging the very edge */
+        }
+
+        .checklist-container {
+            justify-content: center !important;
+            width: 100%;
+            margin-top: 20px !important;
+            gap: 15px !important;
+        }
+
+        .image-container {
+            min-height: auto !important; 
+            margin-top: 30px; 
+            padding: 0; 
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .project-illustration {
+            max-width: 250px; 
+            border-width: 8px; 
+            animation: none; 
+        }
+        
+        .about-hero::after {
+            display: none;
+        }
+
+        /* --- AUTO-ACTIVE MOBILE CARDS --- */
+        .tech-card {
+            text-align: center;
+            padding: 35px 20px !important; 
+            transform: translateY(-5px) !important;
+            box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.15) !important;
+            border-color: rgba(79, 70, 229, 0.2) !important;
+        }
+
+        .icon-wrapper {
+            margin: 0 auto 20px auto !important; 
+            transform: scale(1.1) rotate(5deg) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        }
+
+        .tech-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    }
+</style>
+
+<div class="about-wrapper">
+    <div class="container py-4">
+        
+        <div class="about-hero p-5 shadow-sm border mb-5">
+            <div class="row align-items-center position-relative" style="z-index: 1;">
+                
+                <div class="col-lg-6">
+                    <span class="badge rounded-pill px-3 py-2 mb-3 bg-white text-indigo border shadow-sm animate-text" style="font-weight: 700;">
+                        <i class="bi bi-info-circle-fill me-1"></i> About QR-Attend
+                    </span>
+                    <h1 class="fw-bold display-5 mb-4 animate-text delay-1" style="color: #0f172a; letter-spacing: -1px; line-height: 1.2;">
+                        Revolutionizing Campus <span class="text-indigo">Attendance.</span>
+                    </h1>
+                    <p class="lead text-secondary mb-4 animate-text delay-2" style="line-height: 1.7;">
+                        Designed specifically for <strong>CIMAGE College</strong>, this system bridges the gap between physical presence and digital verification. We are solving the age-old problem of proxy attendance using modern web technology, Geofencing, and timed cryptographic tokens.
+                    </p>
+                    
+                    <div class="d-flex align-items-center justify-content-lg-start mt-2 animate-text delay-3 checklist-container flex-wrap">
+                        <div class="d-flex align-items-center text-secondary fw-semibold">
+                            <i class="bi bi-lightning-fill text-success me-2 h5 mb-0"></i> Fast
+                        </div>
+                        <div class="d-flex align-items-center text-secondary fw-semibold">
+                            <i class="bi bi-shield-fill-check text-success me-2 h5 mb-0"></i> Secure
+                        </div>
+                        <div class="d-flex align-items-center text-secondary fw-semibold">
+                            <i class="bi bi-crosshair text-success me-2 h5 mb-0"></i> Accurate
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mt-4 mt-lg-0 position-relative image-container">
+                    <div class="glow-circle d-none d-md-block"></div>
+                    
+                    <img src="https://th.bing.com/th/id/OIP.K88VKkV0lNXujwQejn6a3gHaEv?w=252&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" 
+                         alt="Secure QR Scanning illustration" 
+                         class="project-illustration">
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-5 mt-5 pt-4">
+            <h6 class="text-indigo fw-bold text-uppercase tracking-wider mb-2">The Engine</h6>
+            <h2 class="fw-bold display-6" style="color: #0f172a;">Core Technologies</h2>
+            <p class="text-muted col-lg-6 mx-auto">Our proxy-proof system relies on three robust technological pillars to ensure total accuracy.</p>
+        </div>
+
+        <div class="row g-4 pb-5">
+            <div class="col-md-4">
+                <div class="card tech-card p-5 shadow-sm card-geo">
+                    <div class="icon-wrapper shadow-sm">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: #1e293b;">Geofencing</h4>
+                    <p class="text-muted small mb-0">
+                        Utilizes HTML5 Geolocation API and the Haversine formula to ensure students are physically within <strong>50 meters</strong> of the teacher's coordinates before the server accepts their scan.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card tech-card p-5 shadow-sm card-time">
+                    <div class="icon-wrapper shadow-sm">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: #1e293b;">Timed Tokens</h4>
+                    <p class="text-muted small mb-0">
+                        QR codes are securely encrypted with UUIDs and automatically expire after exactly <strong>3 minutes</strong>. This makes it impossible to share active links with absent friends later.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card tech-card p-5 shadow-sm card-db">
+                    <div class="icon-wrapper shadow-sm">
+                        <i class="bi bi-database-lock"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3" style="color: #1e293b;">MySQL Security</h4>
+                    <p class="text-muted small mb-0">
+                        Direct integration with Django's ORM and a robust MySQL backend for secure data storage. Includes duplicate-entry prevention for robust attendance logging.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div> {% endblock %}

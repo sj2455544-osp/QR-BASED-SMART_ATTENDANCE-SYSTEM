@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account | QR-Attend{% endblock %}
+
+{% block content %}
+<style>
+    .auth-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at 0% 0%, #eef2ff 0%, #f8fafc 50%, #f1f5f9 100%);
+        position: relative;
+        overflow-x: hidden;
+        padding: 60px 0;
+    }
+
+    /* Floating Decorative Elements */
+    .shape { position: absolute; filter: blur(80px); z-index: 0; border-radius: 50%; opacity: 0.4; }
+    .shape-1 { width: 400px; height: 400px; background: #4f46e5; top: -100px; left: -100px; }
+    .shape-2 { width: 350px; height: 350px; background: #0ea5e9; bottom: -50px; left: -100px; }
+
+    /* Centered Header Style */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        z-index: 2;
+        position: relative;
+    }
+
+    .page-header h1 {
+        font-weight: 800;
+        font-size: 2.8rem;
+        color: #0f172a;
+        letter-spacing: -1.5px;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 35px;
+        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 1);
+        z-index: 1;
+        position: relative;
+        max-width: 1100px;
+        width: 100%;
+    }
+
+    .auth-form-section {
+        padding: 60px;
+    }
+
+    .auth-image-section {
+        background: linear-gradient(145deg, #4f46e5 0%, #6366f1 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 50px;
+        color: white;
+        text-align: center;
+    }
+
+    .floating-img {
+        animation: float 5s ease-in-out infinite;
+        max-width: 90%;
+        margin-bottom: 30px;
+        filter: drop-shadow(0 30px 40px rgba(0,0,0,0.25));
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-25px) rotate(1deg); }
+    }
+
+    /* Form Design */
+    .input-group-text {
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-right: none;
+        border-radius: 16px 0 0 16px;
+        color: #4f46e5;
+        padding-left: 20px;
+    }
+
+    .custom-input {
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 0 16px 16px 0;
+        padding: 14px 18px;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .custom-input:focus {
+        border-color: #4f46e5;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+    }
+
+    .no-group.custom-input {
+        border-radius: 16px !important;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-left: 5px;
+    }
+
+    .btn-signup {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 16px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-signup:hover {
+        background: #4338ca;
+        transform: translateY(-3px);
+        box-shadow: 0 25px 50px -10px rgba(79, 70, 229, 0.5);
+        color: white;
+    }
+
+    /* Dynamic Boxes */
+    #admin-code-div {
+        display: none;
+        background: #fef2f2;
+        padding: 20px;
+        border-radius: 20px;
+        border: 2px solid #fee2e2;
+        margin-top: 15px;
+    }
+
+    #course-div {
+        display: none; 
+        margin-top: 15px;
+    }
+
+    #batch-div {
+        display: none; /* NEW BATCH DIV HIDDEN INITIALLY */
+        margin-top: 15px;
+    }
+
+    .pass-hint {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 5px;
+        display: block;
+        font-weight: 600;
+    }
+
+    @media (max-width: 991.98px) {
+        .auth-form-section { padding: 40px 25px; }
+        .auth-image-section { display: none; }
+        .page-header h1 { font-size: 2rem; }
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <div class="page-header animate__animated animate__fadeInDown">
+        <span class="badge rounded-pill px-4 py-2 mb-3 bg-indigo-soft text-primary fw-bold border border-primary opacity-75">
+            <i class="bi bi-person-plus-fill me-2"></i> REGISTRATION PHASE
+        </span>
+        <h1>Join <span class="text-primary">QR-Attend</span></h1>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11 col-xl-10">
+                <div class="auth-card row g-0">
+                    
+                    <div class="col-lg-7 auth-form-section">
+                        <div class="mb-5">
+                            <h3 class="fw-800 text-dark mb-2">Create Account</h3>
+                            <p class="text-muted">Fill in your professional details to get started.</p>
+                        </div>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+                                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'signup' %}" class="mt-2">
+                            {% csrf_token %}
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Full Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
+                                        <input type="text" name="username" class="form-control custom-input" placeholder="Shubham Kumar Jha" pattern="[a-zA-Z\s]+" title="Name should only contain letters and spaces. No numbers or special characters." required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">ID Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-fingerprint"></i></span>
+                                        <input type="text" name="student_id" class="form-control custom-input" placeholder="000-00000" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mt-1">
+                                <div class="col-md-6">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                                        <input type="email" name="email" class="form-control custom-input" placeholder="name@cimage.in" pattern=".+@cimage\.in" title="Please use your official @cimage.in email" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Indian Phone (+91)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-phone-fill"></i></span>
+                                        <input type="tel" name="phone" class="form-control custom-input" placeholder="9876543210" pattern="^[6-9]\d{9}$" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="form-label">I am a...</label> 
+                                <select name="role" id="role-select" class="form-select custom-input no-group" required style="cursor: pointer;">
+                                    <option value="" disabled selected>--- Select Account Type ---</option>
+                                    <option value="student">Student</option>
+                                    <option value="admin">Teacher / Faculty</option>
+                                </select>
+                            </div>
+
+                            <div id="course-div">
+                                <label class="form-label">Academic Course</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-book-half"></i></span>
+                                    <select name="course" id="course_select" class="form-select custom-input">
+                                        <option value="" disabled selected>--- Select Your Course ---</option>
+                                        <option value="BCA">BCA</option>
+                                        <option value="BBA">BBA</option>
+                                        <option value="BSC-IT">BSC-IT</option>
+                                        <option value="BBM">BBM</option>
+                                        <option value="MCA">MCA</option>
+                                        <option value="MBA">MBA</option>
+                                        <option value="PGDM">PGDM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="batch-div">
+                                <label class="form-label">Select Batch</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-people-fill"></i></span>
+                                    <select name="batch" id="batch_select" class="form-select custom-input">
+                                        <option value="" disabled selected>--- Select Your Batch ---</option>
+                                        <option value="Batch 1">Batch 1</option>
+                                        <option value="Batch 2">Batch 2</option>
+                                        <option value="Batch 3">Batch 3</option>
+                                        <option value="Batch 4">Batch 4</option>
+                                        <option value="Batch 5">Batch 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="admin-code-div">
+                                <label class="form-label text-danger">Verification Code</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-danger bg-white text-danger"><i class="bi bi-shield-lock"></i></span>
+                                    <input type="password" name="admin_code" id="admin_code" class="form-control custom-input border-danger" placeholder="Enter Faculty Code">
+                                </div>
+                                <p class="small text-danger mt-2 mb-0 fw-600"><i class="bi bi-info-circle me-1"></i> Only authorized staff accounts require this.</p>
+                            </div>
+
+                            <div class="row g-4 mt-2 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" name="password" class="form-control custom-input no-group" placeholder="••••••••" minlength="8" required>
+                                    <small class="pass-hint">Min. 8 characters with 1 capital letter, 1 number, and 1 symbol.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Verify Password</label>
+                                    <input type="password" name="confirm_password" class="form-control custom-input no-group" placeholder="••••••••" minlength="8" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-signup w-100 mb-4">
+                                <i class="bi bi-patch-check-fill me-2"></i> Register New Account
+                            </button>
+
+                            <div class="text-center">
+                                <p class="text-muted fw-semibold">Already have an account? <a href="/accounts/login/" class="text-primary text-decoration-none">Log In Now</a></p>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-5 auth-image-section">
+                        <img src="https://img.freepik.com/free-vector/access-control-system-abstract-concept_335657-3180.jpg" alt="Auth" class="floating-img">
+                        <h4 class="fw-800 mb-3">Enterprise Security</h4>
+                        <div class="px-4 opacity-75 small">
+                            <p><i class="bi bi-lightning-charge-fill text-warning me-2"></i> <strong>FAST:</strong> Scan & mark in seconds.</p>
+                            <p><i class="bi bi-geo-fill text-info me-2"></i> <strong>GEO:</strong> Verified physical presence.</p>
+                            <p><i class="bi bi-incognito text-light me-2"></i> <strong>ANTI-PROXY:</strong> One-device scan logic.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const roleSelect = document.getElementById("role-select");
+        const adminCodeDiv = document.getElementById("admin-code-div");
+        const adminCodeInput = document.getElementById("admin_code");
+        
+        const courseDiv = document.getElementById("course-div");
+        const courseSelect = document.getElementById("course_select");
+        
+        // NEW JS FOR BATCH DIV
+        const batchDiv = document.getElementById("batch-div");
+        const batchSelect = document.getElementById("batch_select");
+
+        roleSelect.addEventListener("change", function() {
+            if (this.value === "admin") {
+                // Admin specific dikhao
+                adminCodeDiv.style.display = "block";
+                adminCodeInput.setAttribute('required', 'required');
+                
+                // Student specific chupao (Course & Batch dono)
+                courseDiv.style.display = "none";
+                courseSelect.removeAttribute('required');
+                courseSelect.value = "";
+                
+                batchDiv.style.display = "none";
+                batchSelect.removeAttribute('required');
+                batchSelect.value = "";
+                
+            } else if (this.value === "student") {
+                // Admin specific chupao
+                adminCodeDiv.style.display = "none";
+                adminCodeInput.removeAttribute('required');
+                adminCodeInput.value = "";
+                
+                // Student specific dikhao
+                courseDiv.style.display = "block";
+                courseSelect.setAttribute('required', 'required');
+                
+                // Batch ko hide rakho jab tak course select na ho jaye
+                batchDiv.style.display = "none";
+                batchSelect.removeAttribute('required');
+                batchSelect.value = "";
+            }
+        });
+
+        // NAYA EVENT LISTENER - JAB COURSE CHOOSE HO JAYE
+        courseSelect.addEventListener("change", function() {
+            if (this.value !== "") {
+                // Course select ho gaya -> Batch popup show karo
+                batchDiv.style.display = "block";
+                batchSelect.setAttribute('required', 'required');
+            } else {
+                batchDiv.style.display = "none";
+                batchSelect.removeAttribute('required');
+                batchSelect.value = "";
+            }
+        });
+    });
+</script>
+{% endblock %}

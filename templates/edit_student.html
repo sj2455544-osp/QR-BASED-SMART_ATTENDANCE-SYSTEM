@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student | Faculty Portal</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary: #e11d48; 
+            --secondary: #be123c;
+            --dark: #0f172a;
+            --bg-light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        /* FLEXBOX FIX FOR FOOTER PUSH */
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-light); 
+            color: #334155; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0; padding-top: 85px; 
+        }
+        
+        /* --- PROFESSIONAL NAVBAR --- */
+        .faculty-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03);
+            z-index: 1000; position: fixed; top: 0; width: 100%;
+        }
+        .navbar-brand { font-weight: 800; color: var(--dark) !important; display: flex; align-items: center; gap: 10px; font-size: 1.4rem; }
+        .faculty-badge { font-size: 0.7rem; background: #ffe4e6; color: var(--primary); padding: 6px 12px; border-radius: 8px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        
+        .nav-link { font-weight: 600; color: #64748b !important; padding: 8px 16px !important; border-radius: 10px; transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { background: #ffe4e6; color: var(--primary) !important; }
+
+        .nav-profile-btn { background: white; border: 1px solid #e2e8f0; color: var(--dark); font-weight: 600; padding: 8px 16px; border-radius: 12px; transition: all 0.2s ease; cursor: pointer; }
+
+        /* --- FORM CONTENT --- */
+        .dashboard-wrapper { flex: 1; padding: 40px 0; display: flex; align-items: center; justify-content: center; }
+        
+        .edit-card { 
+            background: white; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 50px -10px rgba(225, 29, 72, 0.08); 
+            border: 1px solid rgba(0,0,0,0.03); 
+            padding: 40px; 
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-save { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 12px; padding: 14px; font-weight: 700; border: none; transition: all 0.3s ease;}
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(225, 29, 72, 0.2); color: white; }
+        
+        .btn-cancel { border-radius: 12px; padding: 14px; font-weight: 700; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
+        .btn-cancel:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        /* Responsive Card Adjustments */
+        @media (max-width: 768px) {
+            .edit-card { padding: 30px 20px; }
+        }
+
+        /* --- PREMIUM FOOTER --- */
+        .modern-footer { 
+            background-color: var(--dark); 
+            padding: 50px 0 25px; 
+            margin-top: auto; 
+            border-top: 4px solid var(--primary);
+        }
+        .footer-brand-icon { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        
+        /* Responsive Footer Links Container */
+        .footer-links-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        @media (min-width: 992px) {
+            .footer-links-container { justify-content: flex-end; }
+        }
+        
+        .footer-link { color: #cbd5e1; text-decoration: none; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;}
+        .footer-link:hover { color: white !important; transform: translateX(3px); }
+        .footer-link i { color: var(--primary); }
+        .footer-text-light { color: #94a3b8; } 
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg faculty-nav fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
+                <div class="bg-danger text-white rounded p-1 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                    <i class="bi bi-qr-code fs-5"></i>
+                </div>
+                QR-Attend <span class="faculty-badge d-none d-md-inline-block ms-2">Faculty Portal</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#facultyNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="facultyNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-2">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'generate_qr' %}"><i class="bi bi-qr-code-scan me-1"></i> Generate QR</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'class_reports' %}"><i class="bi bi-file-earmark-bar-graph-fill me-1"></i> Class Reports</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'manage_students' %}"><i class="bi bi-people-fill me-1"></i> Manage Students</a></li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="nav-profile-btn d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle text-danger fs-5"></i>
+                        <span>Prof. {{ user.first_name }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2">
+                        <li><a class="dropdown-item py-2 rounded fw-semibold" href="{% url 'admin_profile' %}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 rounded fw-semibold text-danger bg-danger bg-opacity-10" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <div class="container d-flex justify-content-center">
+            <div class="edit-card animate__animated animate__fadeIn">
+                <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-person-lines-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-800 mb-0 text-dark">Edit Student Profile</h4>
+                        <p class="small text-muted mb-0">Update information for {{ student.name }}</p>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-person"></i></span>
+                            <input type="text" name="name" class="form-control p-3 bg-light border-0 rounded-end-3" value="{{ student.name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">University ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-fingerprint"></i></span>
+                                <input type="text" name="student_id" class="form-control p-3 bg-light border-0 rounded-end-3" value="{{ student.student_id }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                <input type="text" name="phone" class="form-control p-3 bg-light border-0 rounded-end-3" value="{{ student.phone }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Course</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-book-half"></i></span>
+                                <select name="course" class="form-select p-3 bg-light border-0 rounded-end-3" required>
+                                    <option value="BCA" {% if student.course == 'BCA' %}selected{% endif %}>BCA</option>
+                                    <option value="BSC-IT" {% if student.course == 'BSC-IT' %}selected{% endif %}>BSC-IT</option>
+                                    <option value="BBA" {% if student.course == 'BBA' %}selected{% endif %}>BBA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Batch</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-people"></i></span>
+                                <select name="batch" class="form-select p-3 bg-light border-0 rounded-end-3" required>
+                                    <option value="Batch 1" {% if student.batch == 'Batch 1' %}selected{% endif %}>Batch 1</option>
+                                    <option value="Batch 2" {% if student.batch == 'Batch 2' %}selected{% endif %}>Batch 2</option>
+                                    <option value="Batch 3" {% if student.batch == 'Batch 3' %}selected{% endif %}>Batch 3</option>
+                                    <option value="Batch 4" {% if student.batch == 'Batch 4' %}selected{% endif %}>Batch 4</option>
+                                    <option value="Batch 5" {% if student.batch == 'Batch 5' %}selected{% endif %}>Batch 5</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <a href="{% url 'manage_students' %}" class="btn btn-cancel w-100 bg-white text-dark text-decoration-none text-center">Cancel</a>
+                        <button type="submit" class="btn btn-save w-100"><i class="bi bi-check2-circle me-1"></i> Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="row gy-4 align-items-center">
+                
+                <div class="col-lg-4 text-center text-lg-start">
+                    <div class="d-flex align-items-center justify-content-center justify-content-lg-start gap-3 mb-2">
+                        <div class="footer-brand-icon shadow-sm"><i class="bi bi-qr-code-scan"></i></div>
+                        <h4 class="fw-900 text-white mb-0">QR-Attend</h4>
+                    </div>
+                    <p class="small footer-text-light mb-0 pe-lg-4 mt-2 mx-auto mx-lg-0" style="max-width: 300px;">
+                        Faculty Control Center for secure, geofenced, and proxy-free attendance management.
+                    </p>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="footer-links-container">
+                        <a href="{% url 'admin_dashboard' %}" class="footer-link"><i class="bi bi-house-door-fill"></i> Dashboard</a>
+                        <a href="{% url 'class_reports' %}" class="footer-link"><i class="bi bi-file-earmark-text-fill"></i> Reports</a>
+                        <a href="#" class="footer-link"><i class="bi bi-shield-fill-check"></i> Security Policies</a>
+                        <a href="#" class="footer-link text-danger"><i class="bi bi-headset"></i> IT Support</a>
+                    </div>
+                </div>
+
+            </div>
+            
+            <hr class="border-secondary opacity-25 my-4">
+            
+            <div class="row align-items-center small footer-text-light">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; 2026 QR-Attend System. Authorized Staff Only.
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    Developed for <span class="fw-bold text-white">CIMAGE College, Patna</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

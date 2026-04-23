@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR | QR-Attend</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root { 
+            --primary: #e11d48; 
+            --secondary: #be123c; 
+            --dark: #0f172a; 
+            --bg-light: #f8fafc; 
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-light); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding-top: 110px !important; 
+        }
+        
+        .faculty-nav { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(0,0,0,0.06); 
+            padding: 12px 0; 
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03); 
+            z-index: 2000 !important; 
+        }
+
+        .navbar-brand { font-weight: 800; color: var(--dark) !important; display: flex; align-items: center; gap: 10px; font-size: 1.4rem; }
+        .faculty-badge { font-size: 0.7rem; background: #ffe4e6; color: var(--primary); padding: 6px 12px; border-radius: 8px; font-weight: 700; text-transform: uppercase; }
+        .nav-link { font-weight: 600; color: #64748b !important; padding: 8px 16px !important; border-radius: 10px; transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { background: #ffe4e6; color: var(--primary) !important; }
+        .nav-profile-btn { background: white; border: 1px solid #e2e8f0; color: var(--dark); font-weight: 600; padding: 8px 16px; border-radius: 12px; transition: all 0.2s ease; cursor: pointer; }
+
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            align-items: flex-start; 
+            justify-content: center; 
+            padding: 20px;
+            padding-bottom: 60px; /* Space before footer */
+        }
+
+        .setup-card, .qr-display-card { 
+            background: white; 
+            border-radius: 30px; 
+            box-shadow: 0 20px 60px -15px rgba(0,0,0,0.08); 
+            border: 1px solid rgba(0,0,0,0.05); 
+            max-width: 520px; 
+            width: 100%; 
+            overflow: hidden; 
+            text-align: center; 
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .setup-header { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            padding: 40px 20px 60px; 
+            color: white; 
+        }
+        
+        /* RESPONSIVE QR CONTAINER */
+        .qr-image-container { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 20px; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            margin: 20px auto 20px;
+            border: 5px solid white; 
+            position: relative;
+            z-index: 10;
+            max-width: 85%; /* Prevents container from touching screen edges */
+            box-sizing: border-box;
+        }
+
+        /* RESPONSIVE QR IMAGE */
+        .qr-image-container img { 
+            width: 240px; 
+            height: 240px; 
+            max-width: 100%; /* Scales down on very small screens */
+            height: auto; 
+            aspect-ratio: 1/1; /* Maintains perfect square */
+            transition: all 0.5s ease; 
+        }
+
+        .qr-expired-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); border-radius: 20px; font-size: 1.3rem; }
+
+        .exam-manual-list { text-align: left; padding: 20px; max-height: 400px; overflow-y: auto; }
+        .student-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
+
+        /* RESPONSIVE TIMER */
+        .timer-display { 
+            font-size: clamp(2.5rem, 12vw, 3.5rem); /* Auto-shrinks based on screen width */
+            font-weight: 800; color: var(--primary); margin: 5px 0; letter-spacing: -2px; 
+        }
+
+        /* RESPONSIVE INFO STRIP */
+        .session-info-strip { 
+            background: #fff1f2; padding: 12px; border-radius: 15px; 
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; /* Allows wrapping on small screens */
+            margin: 15px 10px; border: 1px dashed var(--primary); 
+        }
+        .info-item {
+            flex: 1 1 30%; /* Take up equal space but wrap if too tight */
+            min-width: 70px;
+        }
+        .info-item p { margin: 0; font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; }
+        .info-item h6 { margin: 0; font-weight: 800; color: var(--dark); font-size: 0.9rem; word-break: break-word; } /* Word break fixes overlapping */
+
+        /* --- DASHBOARD-STYLE FOOTER CSS --- */
+        .modern-footer { 
+            background-color: var(--dark); 
+            padding: 40px 0 25px; 
+            margin-top: auto; 
+            border-top: 4px solid var(--primary);
+        }
+        .footer-brand-icon {
+            width: 40px; height: 40px; 
+            background: var(--primary); 
+            color: white; 
+            border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem;
+        }
+        .footer-links-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        @media (min-width: 992px) {
+            .footer-links-container { justify-content: flex-end; }
+        }
+        .footer-link {
+            color: #cbd5e1; 
+            text-decoration: none; font-weight: 600; 
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+            white-space: nowrap;
+        }
+        .footer-link:hover { color: white !important; transform: translateX(3px); }
+        .footer-link i { color: var(--primary); }
+        .footer-text-light { color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg faculty-nav fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
+                <div class="bg-danger text-white rounded p-1 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                    <i class="bi bi-qr-code fs-5"></i>
+                </div>
+                QR-Attend <span class="faculty-badge d-none d-md-inline-block ms-2">Faculty Portal</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#facultyNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="facultyNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-2">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'generate_qr' %}"><i class="bi bi-qr-code-scan me-1"></i> Generate QR</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'class_reports' %}"><i class="bi bi-file-earmark-bar-graph-fill me-1"></i> Class Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'manage_students' %}"><i class="bi bi-people-fill me-1"></i> Manage Students</a></li>
+                </ul>
+                <div class="dropdown">
+                    <button class="nav-profile-btn d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle text-danger fs-5"></i><span>Prof. {{ user.first_name }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2">
+                        <li><a class="dropdown-item py-2 rounded fw-semibold" href="{% url 'admin_profile' %}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 rounded fw-semibold text-danger bg-danger bg-opacity-10" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content flex-column align-items-center">
+        {% if messages %}
+        <div style="max-width: 480px; width: 100%; margin-bottom: 15px;">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show rounded-4 border-0 shadow-sm" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i><strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not qr_image and not students %}
+        <div class="setup-card">
+            <div class="setup-header"><h3 class="fw-800 mb-1">Session Setup</h3><p class="mb-0 opacity-75">Configure mode and target audience</p></div>
+            <div class="p-4 p-md-5">
+                <form action="{% url 'generate_qr' %}" method="POST" id="qrSetupForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="latitude" id="lat"><input type="hidden" name="longitude" id="lng">
+                    
+                    <div class="mb-3 text-start">
+                        <label class="form-label fw-700 small text-muted text-uppercase">Session Mode</label>
+                        <select name="session_type" id="session_mode" class="form-select p-3 shadow-sm border-2 border-primary" style="background-color: #fff1f2;" required onchange="toggleModeUI()">
+                            <option value="CLASS" selected>Regular Class (Geo-Fenced QR)</option>
+                            <option value="EXAM">Examination (Faculty Manual Entry)</option>
+                            <option value="EVENT">College Event (Open for All)</option>
+                        </select>
+                        <p class="text-muted mt-1" style="font-size: 0.75rem;">
+                            <i class="bi bi-info-circle-fill text-primary"></i> 
+                            <span id="mode_description">Standard attendance rules apply.</span>
+                        </p>
+                    </div>
+
+                    <div id="target_inputs">
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Target Course</label>
+                            <select name="course" id="course_id" class="form-select p-3 shadow-sm border-2" required>
+                                <option value="" disabled selected>-- Select Course --</option>
+                                <option value="BCA">BCA</option><option value="BSC-IT">BSC-IT</option><option value="BBA">BBA</option><option value="MCA">MCA</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-700 small text-muted text-uppercase">Select Batch</label>
+                            <select name="batch" id="batch_id" class="form-select p-3 shadow-sm border-2" required>
+                                <option value="" disabled selected>-- Choose Batch --</option>
+                                <option value="Batch 1">Batch 1</option><option value="Batch 2">Batch 2</option><option value="Batch 3">Batch 3</option><option value="Batch 4">Batch 4</option><option value="Batch 5">Batch 5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 text-start">
+                        <label class="form-label fw-700 small text-muted text-uppercase">Subject / Topic Name</label>
+                        <input type="text" name="subject" class="form-control p-3 shadow-sm border-2" placeholder="e.g. Data Structures" required>
+                    </div>
+                    
+                    <button type="button" class="btn btn-danger w-100 py-3 rounded-4 fw-800 shadow-sm" onclick="getLocationAndSubmit()" id="activate_btn">
+                        <i class="bi bi-lightning-charge-fill me-2"></i> ACTIVATE LIVE SESSION
+                    </button>
+                    <p id="geo-status" class="text-center mt-3 small fw-700 text-muted"></p>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="qr-display-card text-center">
+            <div class="setup-header">
+                <h4 class="fw-800 mb-1" style="font-size: clamp(1.2rem, 5vw, 1.5rem);">SESSION ACTIVE</h4>
+                <p class="mb-0 small opacity-75">Recording Attendance</p>
+            </div>
+            
+            {% if session.session_type == 'EXAM' %}
+            <div class="exam-manual-list">
+                <div class="alert alert-warning py-2 rounded-3 border-0 small fw-bold mb-3">
+                    <i class="bi bi-shield-lock-fill"></i> EXAM MODE: Manual checklist for {{ session.batch }}
+                </div>
+                <div id="student-list-container" style="max-height: 350px; overflow-y: auto;">
+                    {% if students %}
+                        {% for student in students %}
+                        <div class="student-item" id="row-{{ student.id }}">
+                            <span><strong>{{ student.roll_number }}</strong> - {{ student.name }}</span>
+                            <button class="btn btn-sm btn-outline-success rounded-pill px-3" 
+                                    onclick="markManualAttendance('{{ student.id }}', '{{ session.id }}', this)">
+                                Mark Present
+                            </button>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center p-4 text-muted">No students found for this batch.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="qr-image-container">
+                <img src="data:image/png;base64,{{ qr_image }}" alt="Attendance QR" id="qr_img_tag">
+                <div class="qr-expired-overlay" id="expired_overlay">SESSION EXPIRED</div>
+            </div>
+            <div class="timer-display" id="timer">03:00</div>
+            {% endif %}
+
+            <div class="px-2 px-sm-4 pb-4"> <div class="session-info-strip">
+                    <div class="info-item"><p>Type</p><h6>{{ session.session_type }}</h6></div>
+                    <div class="info-item"><p>Batch</p><h6>{{ session.batch|default:"Global" }}</h6></div>
+                    <div class="info-item"><p>Subject</p><h6>{{ session.subject }}</h6></div>
+                </div>
+                <div class="pt-3 border-top px-3">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-dark py-2 px-4 px-sm-5 rounded-pill fw-bold w-100" onclick="clearTimer()">FINISH SESSION</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="row gy-5 align-items-center">
+                
+                <div class="col-lg-4 text-center text-lg-start">
+                    <div class="d-flex align-items-center justify-content-center justify-content-lg-start gap-3 mb-3">
+                        <div class="footer-brand-icon shadow-sm"><i class="bi bi-qr-code-scan"></i></div>
+                        <h4 class="fw-800 text-white mb-0">QR-Attend</h4>
+                    </div>
+                    <p class="small footer-text-light mb-0 mx-auto mx-lg-0" style="max-width: 300px;">
+                        Faculty Control Center for secure, geofenced, and proxy-free attendance management.
+                    </p>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="footer-links-container">
+                        <a href="{% url 'admin_dashboard' %}" class="footer-link"><i class="bi bi-house-door-fill"></i> Dashboard</a>
+                        <a href="{% url 'class_reports' %}" class="footer-link"><i class="bi bi-file-earmark-text-fill"></i> Reports</a>
+                        <a href="#" class="footer-link"><i class="bi bi-shield-fill-check"></i> Security Policies</a>
+                        <a href="#" class="footer-link text-danger"><i class="bi bi-headset"></i> IT Support</a>
+                    </div>
+                </div>
+
+            </div>
+            
+            <hr class="border-secondary opacity-25 my-4">
+            
+            <div class="row align-items-center small footer-text-light">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    &copy; 2026 QR-Attend System. <span class="d-block d-sm-inline mt-1 mt-sm-0">Authorized Staff Only.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    Developed for <span class="fw-bold text-white">CIMAGE College, Patna</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function markManualAttendance(studentId, sessionId, btn) {
+            fetch('/attendance/mark-manual/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'student_id': studentId,
+                    'session_id': sessionId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
+                    btn.innerHTML = '<i class="bi bi-check-lg"></i> Present';
+                    btn.disabled = true;
+                } else {
+                    alert("Error marking attendance: " + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function toggleModeUI() {
+            const mode = document.getElementById('session_mode').value;
+            const targetFields = document.getElementById('target_inputs');
+            const desc = document.getElementById('mode_description');
+            const btn = document.getElementById('activate_btn');
+            const course = document.getElementById('course_id');
+            const batch = document.getElementById('batch_id');
+
+            if (mode === 'EXAM') {
+                targetFields.style.opacity = "1";
+                course.required = true;
+                batch.required = true;
+                desc.innerHTML = "<span class='text-danger'>Exam Mode: Faculty manual checklist (No QR).</span>";
+                btn.innerHTML = '<i class="bi bi-list-check me-2"></i> OPEN ATTENDANCE SHEET';
+            } else if (mode === 'EVENT') {
+                targetFields.style.opacity = "0.5";
+                course.required = false;
+                batch.required = false;
+                desc.innerHTML = "Event Mode: Course/Batch matching disabled.";
+                btn.innerHTML = '<i class="bi bi-calendar-event me-2"></i> ACTIVATE EVENT';
+            } else {
+                targetFields.style.opacity = "1";
+                course.required = true;
+                batch.required = true;
+                desc.innerText = "Standard attendance rules apply.";
+                btn.innerHTML = '<i class="bi bi-lightning-charge-fill me-2"></i> ACTIVATE LIVE SESSION';
+            }
+        }
+
+        function getLocationAndSubmit() {
+            const status = document.getElementById('geo-status');
+            status.innerText = "Securing GPS location...";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    document.getElementById('lat').value = position.coords.latitude;
+                    document.getElementById('lng').value = position.coords.longitude;
+                    localStorage.removeItem('attendance_timer');
+                    document.getElementById('qrSetupForm').submit();
+                }, (error) => { alert("GPS Required! Please enable location permissions."); });
+            }
+        }
+
+        {% if qr_image and session.session_type != 'EXAM' %}
+        const SESSION_DURATION = 180; 
+        let startTime = localStorage.getItem('attendance_timer') || Date.now();
+        localStorage.setItem('attendance_timer', startTime);
+
+        const timerInterval = setInterval(() => {
+            let elapsed = Math.floor((Date.now() - startTime) / 1000);
+            let remaining = SESSION_DURATION - elapsed;
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer').innerText = "EXPIRED";
+                document.getElementById('qr_img_tag').style.filter = "blur(10px) grayscale(1)";
+                document.getElementById('expired_overlay').style.display = "flex";
+                localStorage.removeItem('attendance_timer');
+            } else {
+                let mins = Math.floor(remaining / 60);
+                let secs = remaining % 60;
+                document.getElementById('timer').innerText = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+        }, 1000);
+        function clearTimer() { localStorage.removeItem('attendance_timer'); }
+        {% endif %}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
